@@ -1,36 +1,22 @@
-package cz.upce.nnpia_semestralka.Entity;
+package cz.upce.nnpia_semestralka.dto;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import cz.upce.nnpia_semestralka.Entity.FilmHasPerson;
+import cz.upce.nnpia_semestralka.Entity.Genre;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.*;
+import javax.persistence.Column;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
-@Data
-@Entity
-public class Film {
+public class FilmDto {
 
-    @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
-    @Column(length = 30)
     private String name;
-    //neni zaneseno v modelu
     private String path_to_image;
     private Genre genre;
-  @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date releaseDate;
-   @OneToMany(mappedBy = "id",fetch = FetchType.LAZY)
-    private Set<FilmHasPerson> personsInFilm;
-
-    @OneToMany(mappedBy = "id",fetch = FetchType.LAZY)
-    private Set<UserHasFilm> ratingByUsers;
-
- /*   @ManyToOne
-    private FilmLibrary filmLibrary;*/
+    private List<FilmHasPersonDto> personsInFilms;
 
     public Long getId() {
         return id;
@@ -72,19 +58,11 @@ public class Film {
         this.releaseDate = releaseDate;
     }
 
-    public Set<FilmHasPerson> getPersonsInFilm() {
-        return personsInFilm;
+    public List<FilmHasPersonDto> getPersonsInFilms() {
+        return personsInFilms;
     }
 
-    public void setPersonsInFilm(Set<FilmHasPerson> personsInFilm) {
-        this.personsInFilm = personsInFilm;
-    }
-
-    public Set<UserHasFilm> getRatingByUsers() {
-        return ratingByUsers;
-    }
-
-    public void setRatingByUsers(Set<UserHasFilm> ratingByUsers) {
-        this.ratingByUsers = ratingByUsers;
+    public void setPersonsInFilms(List<FilmHasPersonDto> personsInFilms) {
+        this.personsInFilms = personsInFilms;
     }
 }

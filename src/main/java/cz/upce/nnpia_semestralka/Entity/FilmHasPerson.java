@@ -20,5 +20,35 @@ public class FilmHasPerson {
     private Person person;
 
 
+    public Long getId() {
+        return id;
+    }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public TypeOfPerson getTypeOfPerson() {
+        return typeOfPerson;
+    }
+
+    public void setTypeOfPerson(TypeOfPerson typeOfPerson) {
+        this.typeOfPerson = typeOfPerson;
+    }
+
+    public Film getFilm() {
+        return film;
+    }
+
+    public void setFilm(Film film) {
+        this.film = film;
+    }
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(Person person) {
+        this.person = person;
+    }
 }
