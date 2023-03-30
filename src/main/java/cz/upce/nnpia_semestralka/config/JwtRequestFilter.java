@@ -1,7 +1,6 @@
 package cz.upce.nnpia_semestralka.config;
 
-import cz.upce.nnpia_semestralka.service.impl.CustomUserDetailService;
-import cz.upce.nnpia_semestralka.service.impl.JwtUserDetailsService;
+import cz.upce.nnpia_semestralka.service.CustomUserDetailService;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

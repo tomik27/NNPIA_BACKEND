@@ -1,6 +1,6 @@
 package cz.upce.nnpia_semestralka.dto;
 
-import cz.upce.nnpia_semestralka.Entity.Genre;
+import cz.upce.nnpia_semestralka.domain.Genre;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 

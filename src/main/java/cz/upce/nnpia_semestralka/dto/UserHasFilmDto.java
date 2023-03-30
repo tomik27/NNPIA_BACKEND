@@ -1,11 +1,5 @@
 package cz.upce.nnpia_semestralka.dto;
 
-import cz.upce.nnpia_semestralka.Entity.Film;
-import cz.upce.nnpia_semestralka.Entity.User;
-
-import javax.persistence.Column;
-import javax.persistence.ManyToOne;
-
 public class UserHasFilmDto {
 
     private Long id;

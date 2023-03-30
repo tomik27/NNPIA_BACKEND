@@ -1,9 +1,9 @@
 package cz.upce.nnpia_semestralka;
 
 import cz.upce.nnpia_semestralka.Controller.FilmController;
-import cz.upce.nnpia_semestralka.Entity.Film;
-import cz.upce.nnpia_semestralka.Entity.Genre;
-import cz.upce.nnpia_semestralka.Entity.User;
+import cz.upce.nnpia_semestralka.domain.Film;
+import cz.upce.nnpia_semestralka.domain.Genre;
+import cz.upce.nnpia_semestralka.domain.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,8 +12,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,7 +25,7 @@ class FilmApplicationTests {
     private FilmController filmController;
 
     @Autowired
-   private TestRestTemplate testRestTemplate;
+    private TestRestTemplate testRestTemplate;
 
     @Test
     void contextLoads() {
@@ -62,7 +60,7 @@ class FilmApplicationTests {
     private Film createFilm(){
         Film film = new Film();
         film.setName("NameOfFilm");
-        film.setReleaseDate(new Date());
+        film.setReleaseYear(2018);
         film.setId(1L);
         film.setGenre(Genre.HORROR);
         film.setPath_to_image("");

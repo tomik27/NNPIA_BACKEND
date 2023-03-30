@@ -1,20 +1,19 @@
 package cz.upce.nnpia_semestralka.Repository;
 
-import cz.upce.nnpia_semestralka.Entity.Film;
-import cz.upce.nnpia_semestralka.Entity.User;
-import org.springframework.data.jpa.repository.EntityGraph;
+import cz.upce.nnpia_semestralka.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
+import java.util.List;
 
-public interface UserRepository extends JpaRepository<User,Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
-    @EntityGraph(attributePaths = "userRatingFilms")
+    boolean existsByUsername(String username);
+
+    boolean existsByUsernameAndIdIsNot(String username, Long id);
+
     User findByUsername(String username);
-    @EntityGraph(attributePaths = "userRatingFilms")
-    Optional<User> findById(Long id);
 
-    @EntityGraph(attributePaths = "userRatingFilms")
-    User findUserByUsername(String username);
+    List<User> findUserByUsername(String username);
 
+    //boolean existsByRoleName(String name);
 }

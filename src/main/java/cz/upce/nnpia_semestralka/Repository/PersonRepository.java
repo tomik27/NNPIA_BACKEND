@@ -1,7 +1,6 @@
 package cz.upce.nnpia_semestralka.Repository;
 
-import cz.upce.nnpia_semestralka.Entity.Film;
-import cz.upce.nnpia_semestralka.Entity.Person;
+import cz.upce.nnpia_semestralka.domain.Person;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,27 +1,12 @@
 package cz.upce.nnpia_semestralka;
 
-import cz.upce.nnpia_semestralka.Controller.FilmController;
-import cz.upce.nnpia_semestralka.Entity.Film;
-import cz.upce.nnpia_semestralka.Entity.Genre;
-import cz.upce.nnpia_semestralka.Entity.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.http.*;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /*@SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)

@@ -1,61 +1,69 @@
 package cz.upce.nnpia_semestralka.Controller;
 
-import cz.upce.nnpia_semestralka.Entity.Film;
-import cz.upce.nnpia_semestralka.Entity.Genre;
-import cz.upce.nnpia_semestralka.dto.FilmDto;
-import cz.upce.nnpia_semestralka.service.interfaces.FilmService;
+import cz.upce.nnpia_semestralka.domain.Film;
+import cz.upce.nnpia_semestralka.domain.Genre;
+import cz.upce.nnpia_semestralka.dto.AddFilmToUserDto;
+import cz.upce.nnpia_semestralka.dto.AddPersonToFilmDto;
+import cz.upce.nnpia_semestralka.dto.FilmInDto;
+import cz.upce.nnpia_semestralka.dto.FilmOutDto;
+import cz.upce.nnpia_semestralka.service.FilmServiceImpl;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+
 
 @RestController
 @CrossOrigin
-//@Validated
-@RequestMapping("/api/film")
+@RequestMapping("/film")
+@AllArgsConstructor
 public class FilmController {
 
-   private final FilmService filmService;
+   private final FilmServiceImpl filmService;
 
-    private final ModelMapper mapper;
+        private final ModelMapper mapper;
 
-    public FilmController(FilmService filmService, ModelMapper mapper) {
-        this.filmService = filmService;
-        this.mapper = mapper;
-    }
+ /*   @GetMapping("/film")
+    public List<Film> getAllFilm(
+        @RequestParam(defaultValue = "0") Integer pageNumber,
+        @RequestParam(defaultValue = "10") Integer pageSize,
+        @RequestParam(defaultValue = "id") String sortBy,
+        @RequestParam(defaultValue = "ASC") Sort.Direction sortDirection){
+        return filmService.getAll(pageNumber,pageSize,sortBy,sortDirection).stream().collect(Collectors.toList());
+        //return ResponseEntity.ok(mapper.map(all, new TypeToken<List<FilmDto>>(){}.getType()));
+    }*/
 
-    @GetMapping
-    public ResponseEntity<?> getAllFilm(){
-      //  try{
+    @GetMapping("")
+    public ResponseEntity<List<FilmOutDto>> getAllFilm(){
         List<Film> all = filmService.getAll();
-        return ResponseEntity.ok(mapper.map(all, new TypeToken<List<FilmDto>>(){}.getType()));
+        return ResponseEntity.ok(mapper.map(all, new TypeToken<List<FilmOutDto>>(){}.getType()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getFilmDetail(@PathVariable Long id) {
-        FilmDto filmDto = filmService.getFilmDetail(id);
-        return ResponseEntity.ok(filmDto);
+   // @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> getFilmDetail(@PathVariable final Long id) {
+        return ResponseEntity.ok(filmService.getFilmDetail(id));
     }
 
+    @Transactional
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> deleteFilm(@PathVariable Long id) {
-        try {
             filmService.delete(id);
             return ResponseEntity.ok().build();
-        }
-        catch (Exception exception) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
-        }
     }
 /*
     @PostMapping("/api/film")
@@ -70,19 +78,35 @@ public class FilmController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error while creating an film.");
         }
     }*/
-
-@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-@PreAuthorize("hasRole('ROLE_ADMIN')")
-public ResponseEntity<?> createFilm(@RequestBody FilmDto filmDto) {
-    try {
-
-        FilmDto film = filmService.createFilm(filmDto);
-        return ResponseEntity.ok(mapper.map(film, FilmDto.class));
-
-    } catch (Exception exception) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error while creating an film.");
+//@RequestBody FilmDto filmDto @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> createFilm(@RequestParam String name, @RequestParam Genre genre, @RequestParam(required = false) Integer releaseDate, @RequestParam(name="imageFile",required = false) MultipartFile imageFile) throws IOException {
+        FilmInDto filmInDto = new FilmInDto(name,genre,releaseDate);
+        FilmOutDto film = filmService.createFilm(imageFile,filmInDto);
+        return ResponseEntity.ok(film);
     }
-}
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateFilm(@PathVariable Long id,@RequestBody FilmInDto filmInDto) {
+        return ResponseEntity.ok(filmService.editFilm(id,filmInDto));
+    }
+
+    @PostMapping("/addPerson")
+    //  @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+    public ResponseEntity<?> addPersonToFilm(@RequestBody @Valid AddPersonToFilmDto addPersonToFilmDto) {
+        filmService.addPersonToFilm(addPersonToFilmDto);
+        return ResponseEntity.ok().build();
+    }
+    /*
+
+    @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<FilmOutDto> createFilm(@RequestPart("film") FilmInDto filmInDto, @RequestPart("image") MultipartFile imageFile) throws IOException {
+        FilmOutDto film = filmService.createFilm(imageFile, filmInDto);
+        return ResponseEntity.ok(film);
+    }
+*/
+
+
  /*
     @GetMapping(value={"/film-form","/film-form/{id}"})
     //nepovinne

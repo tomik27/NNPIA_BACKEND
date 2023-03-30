@@ -1,11 +1,6 @@
 package cz.upce.nnpia_semestralka.dto;
 
-import cz.upce.nnpia_semestralka.Entity.UserHasFilm;
-
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
 import java.util.List;
-import java.util.Set;
 
 public class UserDto {
 

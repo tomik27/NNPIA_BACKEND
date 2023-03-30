@@ -1,12 +1,12 @@
-package cz.upce.nnpia_semestralka.Entity;
+package cz.upce.nnpia_semestralka.domain;
 
-public enum RoleEnum {
-    ROLE_USER("ROLE_USER"),
-    ROLE_ADMIN("ROLE_ADMIN");
+public enum TypeOfPerson {
+    DIRECTOR("D"),
+    ACTOR("ACTOR");
 
     private final String displayValue;
 
-    RoleEnum(String displayValue) {
+    TypeOfPerson(String displayValue) {
         this.displayValue = displayValue;
     }
 
@@ -14,3 +14,5 @@ public enum RoleEnum {
         return displayValue;
     }
 }
+
+

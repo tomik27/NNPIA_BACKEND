@@ -1,7 +1,7 @@
-package cz.upce.nnpia_semestralka.service.impl;
+package cz.upce.nnpia_semestralka.service;
 
 
-import cz.upce.nnpia_semestralka.Entity.User;
+import cz.upce.nnpia_semestralka.domain.User;
 import cz.upce.nnpia_semestralka.Repository.UserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

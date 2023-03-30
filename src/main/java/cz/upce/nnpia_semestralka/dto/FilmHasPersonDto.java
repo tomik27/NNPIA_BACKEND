@@ -1,10 +1,6 @@
 package cz.upce.nnpia_semestralka.dto;
 
-import cz.upce.nnpia_semestralka.Entity.Film;
-import cz.upce.nnpia_semestralka.Entity.Person;
-import cz.upce.nnpia_semestralka.Entity.TypeOfPerson;
-
-import javax.persistence.ManyToOne;
+import cz.upce.nnpia_semestralka.domain.TypeOfPerson;
 
 public class FilmHasPersonDto {
 
