@@ -27,6 +27,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     private RoleEnum role = RoleEnum.ROLE_USER;
 
-    @OneToMany(mappedBy = "id", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<UserHasFilm> userRatingFilms= Collections.emptyList();
 }

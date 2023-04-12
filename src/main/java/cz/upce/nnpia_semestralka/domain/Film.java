@@ -1,6 +1,7 @@
 package cz.upce.nnpia_semestralka.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -24,8 +25,6 @@ public class Film {
     private Long id;
     @Column(length = 30)
     private String name;
-    @Column
-    private String path_to_image;
     @Lob
     @Column(name = "image", columnDefinition = " LONGBLOB")
     private byte[] image;
@@ -39,4 +38,11 @@ public class Film {
     @OneToMany(mappedBy = "film", cascade = CascadeType.REMOVE)
     private List<UserHasFilm> ratingByUsers= Collections.emptyList();
 
+    public Film(Long id, String name, byte[] image, Genre genre, Integer releaseYear) {
+        this.id = id;
+        this.name = name;
+        this.image = image;
+        this.genre = genre;
+        this.releaseYear = releaseYear;
+    }
 }

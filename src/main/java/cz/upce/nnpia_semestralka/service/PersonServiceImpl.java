@@ -59,21 +59,13 @@ public class PersonServiceImpl {
         Person person = personRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Person not found"));
         List<FilmHasPerson> listFilmsOfPerson = filmHasPersonRepository.findByPerson_Id(id);
 
-        List<PersonHasFilmDto> map = mapper.map(listFilmsOfPerson,
+        List<PersonHasFilmDto> personHasFilmDtos = mapper.map(listFilmsOfPerson,
                 new TypeToken<List<PersonHasFilmDto>>() {
                 }.getType());
 
-
-
-        return mapper.map(person, PersonDto.class);
-        //check if there is a value inside the Optional object
-        /*if(optionalPerson.isPresent()){
-            Person person = optionalPerson.get();
-            //todo add person
-            PersonDto map = mapper.map(person, PersonDto.class);
-            return map;
-        }else
-            throw new NoSuchElementException("Film not found.");*/
+        PersonDto personDto = mapper.map(person, PersonDto.class);
+        personDto.setPersonHasFilmDtos(personHasFilmDtos);
+        return personDto;
     }
 
     public Person removePerson(Long personId) {

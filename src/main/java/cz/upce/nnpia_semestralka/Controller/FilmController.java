@@ -46,6 +46,7 @@ public class FilmController {
         //return ResponseEntity.ok(mapper.map(all, new TypeToken<List<FilmDto>>(){}.getType()));
     }*/
 
+
     @GetMapping("")
     public ResponseEntity<List<FilmOutDto>> getAllFilm(){
         List<Film> all = filmService.getAll();

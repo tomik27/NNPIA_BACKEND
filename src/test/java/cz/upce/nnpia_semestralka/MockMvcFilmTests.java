@@ -7,85 +7,83 @@ import cz.upce.nnpia_semestralka.dto.FilmOutDto;
 import cz.upce.nnpia_semestralka.service.FilmServiceImpl;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.*;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+        import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+        import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
 
 import java.util.Date;
+import java.util.List;
 
 import static org.hamcrest.Matchers.is;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-/*@SpringBootTest
-@AutoConfigureMockMvc(addFilters = false)
-@ActiveProfiles("test")
-@ComponentScan*/
-//@ExperimentalStdlibApi
+
 @SpringBootTest
 @AutoConfigureMockMvc
-class MockMvcFilmTests {
-/*
+class MockMvcFilmTests{
 
+        @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
         @Autowired
-       private   MockMvc mockMvc;
+private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+@MockBean
+private FilmServiceImpl filmService;
 
-        @MockBean
-        private FilmServiceImpl filmService;
+@Autowired
+private ModelMapper mapper;
 
+        private Film  EXISTING = new Film(1L,"Terminator",null,Genre.HORROR,2018);
 
-        @Test
-       void  createNewFilm() throws Exception{
-            FilmOutDto filmOutDto = new FilmOutDto();
-            filmOutDto.setPath_to_image("image.jpg");
-            filmOutDto.setName("Film");
-          //  filmOutDto.setReleaseDate(new Date());
-            filmOutDto.setGenre(Genre.HORROR);
-
-            String dataString = objectMapper.writeValueAsString(filmOutDto);
-            mockMvc.perform(MockMvcRequestBuilders.post("/api/film")
-                    .content(dataString)
-                    .contentType(MediaType.APPLICATION_JSON))
-
-                    .andExpect(MockMvcResultMatchers.status().isOk())
-                    .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.id", Is.is(1)))
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.name", Is.is(filmOutDto.getName())))
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.genre", Is.is(filmOutDto.getGenre())))
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.releaseDate", Is.is(filmOutDto.getReleaseDate())));
-
-        }
-//page problem
-  /*      @Test
-      //  @WithAnonymousUser
-        void getAllFilmsTest() throws Exception {
-                List<Film> filmList = new ArrayList();
-                filmList.add(createFilm());
-                filmList.add(createFilm());
-
-                Mockito.when(filmService.getAll()).thenReturn(filmList);
-
-                mockMvc.perform(MockMvcRequestBuilders.get("/api/film"))
-                        .andExpect(MockMvcResultMatchers.status().isOk())
-                        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(MockMvcResultMatchers.jsonPath("$[0].name", is("NameOfFilm")))
-                        .andExpect(MockMvcResultMatchers.jsonPath("$[0].genre", is("Genre.HORROR")));
-        }
-
-    private Film createFilm(){
+/*
+@Test
+public void testGetAllFilm() throws Exception {
         Film film = new Film();
-        film.setName("NameOfFilm");
-        film.setReleaseDate(new Date());
         film.setId(1L);
-        film.setGenre(Genre.HORROR);
-        film.setPath_to_image("");
-        return film;
-    }
-*/
+        film.setTitle("Test Film");
+        film.setYear(2022);
+
+        List<Film> filmList = new ArrayList<>();
+        filmList.add(film);
+
+        given(filmService.getAll()).willReturn(filmList);
+
+        mockMvc.perform(get("/film"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].id", is(film.getId().intValue())))
+        .andExpect(jsonPath("$[0].title", is(film.getTitle())))
+        .andExpect(jsonPath("$[0].year", is(film.getYear())));
+        }*/
+
+@Test
+public void testGetFilmDetail() throws Exception {
+
+
+        given(filmService.getFilmDetail(1L)).willReturn(EXISTING);
+
+        mockMvc.perform(get("/film/1"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id", is(EXISTING.getId().intValue())))
+        .andExpect(jsonPath("$.name", is(EXISTING.getName())))
+        .andExpect(jsonPath("$.releaseYear", is(EXISTING.getReleaseYear())));
         }
+
+@Test
+public void testDeleteFilm() throws Exception {
+        mockMvc.perform(delete("/film/1"))
+        .andExpect(status().isOk()).
+       // .andExpect(content().string(""));
+        }
+        }
+
+

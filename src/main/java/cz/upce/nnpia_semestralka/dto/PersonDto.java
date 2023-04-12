@@ -17,7 +17,6 @@ public class PersonDto {
     private String lastName;
     private Date birthDate;
     private String birthPlace;
-
-    List<PersonHasFilmDto> personHasFilmDtos;
+    private List<PersonHasFilmDto> personHasFilmDtos;
 
 }

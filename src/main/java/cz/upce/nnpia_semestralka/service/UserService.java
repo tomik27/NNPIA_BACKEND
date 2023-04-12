@@ -14,6 +14,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -92,12 +93,31 @@ public class UserService {
         User user = userRepository.findById(addFilmToUserDto.getUserId()).orElseThrow(() -> new NoSuchElementException("User not found!"));
         Film film = filmRepository.findById(addFilmToUserDto.getFilmId()).orElseThrow(() -> new NoSuchElementException("Film not found!"));
         UserHasFilm userHasFilm = userHasFilmRepository.findByUser_IdAndFilm_Id(addFilmToUserDto.getUserId(), addFilmToUserDto.getFilmId());
-        UserHasFilm newUserHasFilm=mapper.map(addFilmToUserDto,UserHasFilm.class);
 
-        if(userHasFilm==null)
+        UserHasFilm newUserHasFilm = new UserHasFilm();
+        newUserHasFilm.setFilm(film);
+        newUserHasFilm.setUser(user);
+        newUserHasFilm.setComment(addFilmToUserDto.getComment());
+        newUserHasFilm.setRating(addFilmToUserDto.getRating());
+               // =mapper.map(addFilmToUserDto,UserHasFilm.class);
+
+        if(userHasFilm!=null)
             newUserHasFilm.setId(userHasFilm.getId());
 
-        userHasFilmRepository.save(userHasFilm);
+        userHasFilmRepository.save(newUserHasFilm);
+    }
+
+    @PostConstruct
+    public void init() {
+
+        if (!userRepository.existsByUsername("admin")) {
+            User userAdmin = new User();
+            String username = "admin";
+            userAdmin.setUsername(username);
+            userAdmin.setPassword("$2a$10$MQuBpeE5CbgERbKN7ecd1ea/Y3XwpfWVOqKFErLjbhT382.Rgviy.");
+            userAdmin.setRole(RoleEnum.ROLE_ADMIN);
+            userRepository.save(userAdmin);
+        }
     }
 /*
     public User editUser(Long userId, UserDto userDto) {

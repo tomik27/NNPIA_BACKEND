@@ -14,4 +14,6 @@ public interface FilmHasPersonRepository extends JpaRepository<FilmHasPerson,Lon
 
 
     void  deleteFilmHasPersonByFilmId(Long id);
+
+    FilmHasPerson findByFilm_IdAndPerson_Id(Long filmId, Long personId);
 }

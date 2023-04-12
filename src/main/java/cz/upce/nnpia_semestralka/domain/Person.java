@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -24,7 +25,7 @@ public class Person {
     @Column
     private String birthPlace;
 
-    @OneToMany(mappedBy = "id",cascade = CascadeType.REMOVE)
-    private Set<FilmHasPerson> filmsWithPerson;
+    @OneToMany(mappedBy = "person",cascade = CascadeType.REMOVE)
+    private List<FilmHasPerson> filmsWithPerson;
 
 }

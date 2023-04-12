@@ -63,7 +63,6 @@ class FilmApplicationTests {
         film.setReleaseYear(2018);
         film.setId(1L);
         film.setGenre(Genre.HORROR);
-        film.setPath_to_image("");
         return film;
     }
     private User createUser() {

@@ -1,11 +1,12 @@
 package cz.upce.nnpia_semestralka.service;
 
+import cz.upce.nnpia_semestralka.Repository.PersonRepository;
 import cz.upce.nnpia_semestralka.domain.Film;
 import cz.upce.nnpia_semestralka.domain.FilmHasPerson;
-import cz.upce.nnpia_semestralka.domain.Genre;
 import cz.upce.nnpia_semestralka.Repository.FilmHasPersonRepository;
 import cz.upce.nnpia_semestralka.Repository.FilmRepository;
 import cz.upce.nnpia_semestralka.Repository.UserHasFilmRepository;
+import cz.upce.nnpia_semestralka.domain.Person;
 import cz.upce.nnpia_semestralka.dto.AddPersonToFilmDto;
 import cz.upce.nnpia_semestralka.dto.FilmInDto;
 import cz.upce.nnpia_semestralka.dto.FilmOutDto;
@@ -18,11 +19,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -32,14 +28,16 @@ public class FilmServiceImpl  {
 
     private final FilmHasPersonRepository filmHasPersonRepository;
     private final FilmRepository filmRepository;
+    private final PersonRepository personRepository;
     private final ModelMapper mapper;
 
     private final UserHasFilmRepository userHasFilmRepository;
 
 
-    public FilmServiceImpl(FilmHasPersonRepository filmHasPersonRepository, FilmRepository filmRepository, ModelMapper mapper, UserHasFilmRepository userHasFilmRepository) {
+    public FilmServiceImpl(FilmHasPersonRepository filmHasPersonRepository, FilmRepository filmRepository, PersonRepository personRepository, ModelMapper mapper, UserHasFilmRepository userHasFilmRepository) {
         this.filmHasPersonRepository = filmHasPersonRepository;
         this.filmRepository = filmRepository;
+        this.personRepository = personRepository;
         this.mapper = mapper;
         this.userHasFilmRepository = userHasFilmRepository;
     }
@@ -92,11 +90,6 @@ public class FilmServiceImpl  {
         return filmOutDto;
     }
 
-    public Optional<Film> findById(Long id) {
-        return filmRepository.findById(id);
-    }
-
-
     public List<Film> getAll() {
         return filmRepository.findAll();
     }
@@ -147,6 +140,18 @@ public class FilmServiceImpl  {
     }
 
     public void addPersonToFilm(AddPersonToFilmDto addPersonToFilmDto) {
+        Person person = personRepository.findById(addPersonToFilmDto.getPersonId()).orElseThrow(() -> new NoSuchElementException("Person not found!"));
+        Film film = filmRepository.findById(addPersonToFilmDto.getFilmId()).orElseThrow(() -> new NoSuchElementException("Film not found!"));
 
+        FilmHasPerson filmHasPerson = filmHasPersonRepository.findByFilm_IdAndPerson_Id(addPersonToFilmDto.getFilmId(),addPersonToFilmDto.getPersonId());
+        FilmHasPerson newFilmHasPerson = new FilmHasPerson();
+        newFilmHasPerson.setPerson(person);
+        newFilmHasPerson.setFilm(film);
+        newFilmHasPerson.setTypeOfPerson(addPersonToFilmDto.getTypeOfPerson());
+
+        if(filmHasPerson!=null)
+            newFilmHasPerson.setId(filmHasPerson.getId());
+
+        filmHasPersonRepository.save(newFilmHasPerson);
     }
 }
