@@ -14,7 +14,7 @@ import org.springframework.ui.ModelMap;
 //disabling spring security
 //@SpringBootApplication(exclude = SecurityAutoConfiguration.class)
 @SpringBootApplication
-@SecurityScheme(name = "NNPRO_API", scheme = "Bearer", type = SecuritySchemeType.HTTP, in = SecuritySchemeIn.HEADER)
+@SecurityScheme(name = "NNPIA_API", scheme = "Bearer", type = SecuritySchemeType.HTTP, in = SecuritySchemeIn.HEADER)
 public class NnpiaSemestralkaApplication {
 
     //Mapování objektů usnadňuje převod jednoho modelu na druhý

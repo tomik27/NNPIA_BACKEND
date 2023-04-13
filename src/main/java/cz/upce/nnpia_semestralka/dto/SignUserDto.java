@@ -2,7 +2,6 @@ package cz.upce.nnpia_semestralka.dto;
 
 public class SignUserDto {
 
-    private Long id;
 
     private String username;
 
@@ -12,22 +11,14 @@ public class SignUserDto {
 
     private String emailAddress;
 
-    private int role;
+    private String role;
 
-    public int getRole() {
+    public String getRole() {
         return role;
     }
 
-    public void setRole(int role) {
+    public void setRole(String role) {
         this.role = role;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getUsername() {

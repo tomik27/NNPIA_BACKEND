@@ -7,6 +7,7 @@ import cz.upce.nnpia_semestralka.dto.AddPersonToFilmDto;
 import cz.upce.nnpia_semestralka.dto.FilmInDto;
 import cz.upce.nnpia_semestralka.dto.FilmOutDto;
 import cz.upce.nnpia_semestralka.service.FilmServiceImpl;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin
+@SecurityRequirement(name = "NNPIA_API")
 @RequestMapping("/film")
 @AllArgsConstructor
 public class FilmController {
@@ -54,7 +56,7 @@ public class FilmController {
     }
 
     @GetMapping("/{id}")
-   // @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> getFilmDetail(@PathVariable final Long id) {
         return ResponseEntity.ok(filmService.getFilmDetail(id));
     }
@@ -93,7 +95,7 @@ public class FilmController {
     }
 
     @PostMapping("/addPerson")
-    //  @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+      @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     public ResponseEntity<?> addPersonToFilm(@RequestBody @Valid AddPersonToFilmDto addPersonToFilmDto) {
         filmService.addPersonToFilm(addPersonToFilmDto);
         return ResponseEntity.ok().build();

@@ -29,4 +29,11 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<UserHasFilm> userRatingFilms= Collections.emptyList();
+
+    public User(String username, String password, String email, RoleEnum role) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.role = role;
+    }
 }

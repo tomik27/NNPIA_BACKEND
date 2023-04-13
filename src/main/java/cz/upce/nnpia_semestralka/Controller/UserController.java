@@ -2,10 +2,14 @@ package cz.upce.nnpia_semestralka.Controller;
 
 
 import cz.upce.nnpia_semestralka.Repository.UserRepository;
-import cz.upce.nnpia_semestralka.config.JwtTokenUtil;
+import cz.upce.nnpia_semestralka.config.jwt.JwtUtils;
+import cz.upce.nnpia_semestralka.config.services.UserDetailsImpl;
 import cz.upce.nnpia_semestralka.domain.RoleEnum;
 import cz.upce.nnpia_semestralka.domain.User;
 import cz.upce.nnpia_semestralka.dto.*;
+import cz.upce.nnpia_semestralka.payload.request.LoginRequest;
+import cz.upce.nnpia_semestralka.payload.response.JwtResponse;
+import cz.upce.nnpia_semestralka.payload.response.MessageResponse;
 import cz.upce.nnpia_semestralka.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -14,22 +18,20 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import model.JwtRequest;
-import model.JwtResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Objects;
+
 
 @RestController
 @RequestMapping("/user")
@@ -39,15 +41,16 @@ public class UserController {
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
-    private final JwtTokenUtil jwtTokenUtil;
-    private final UserDetailsService jwtInMemoryUserDetailsService;
+    private final   JwtUtils jwtUtils;
+    private final PasswordEncoder encoder;
 
-    public UserController(UserService userService, AuthenticationManager authenticationManager, UserRepository userRepository, JwtTokenUtil jwtTokenUtil, UserDetailsService jwtInMemoryUserDetailsService) {
+
+    public UserController(UserService userService, AuthenticationManager authenticationManager, UserRepository userRepository, JwtUtils jwtUtils, UserDetailsService jwtInMemoryUserDetailsService, PasswordEncoder encoder) {
         this.userService = userService;
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
-        this.jwtTokenUtil = jwtTokenUtil;
-        this.jwtInMemoryUserDetailsService = jwtInMemoryUserDetailsService;
+        this.jwtUtils = jwtUtils;
+        this.encoder = encoder;
     }
 
     @Operation(summary = "Add user")
@@ -59,15 +62,42 @@ public class UserController {
                     content = @Content),
             @ApiResponse(responseCode = "500", description = "User not found",
                     content = @Content),})
-    @SecurityRequirement(name = "NNPRO_API")
-      @PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_Okres')")
+    @SecurityRequirement(name = "NNPIA_API")
+      @PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_USER')")
     @PostMapping("/addUser")
     public ResponseEntity<?> addUser(@RequestBody @Valid SignUserDto userDto) {
         return ResponseEntity.ok(userService.addUser(userDto));
     }
 
+    @PostMapping("/signup")
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUserDto signUpRequest) {
+        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: Username is already taken!"));
+        }
+
+        if (userRepository.existsByEmail(signUpRequest.getEmailAddress())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: Email is already in use!"));
+        }
+        RoleEnum roleEnum = RoleEnum.ROLE_USER;
+        if(RoleEnum.ROLE_ADMIN.getDisplayValue().equals(signUpRequest.getRole()))
+            roleEnum=RoleEnum.ROLE_ADMIN;
+
+        // Create new user's account
+        User user = new User(signUpRequest.getUsername(),
+                signUpRequest.getEmailAddress(),
+                encoder.encode(signUpRequest.getPassword()),
+                roleEnum);
+
+        userRepository.save(user);
+        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+    }
+
     @Operation(summary = "Get user info")
-    @SecurityRequirement(name = "NNPRO_API")
+    @SecurityRequirement(name = "NNPIA_API")
     @GetMapping("/{userId}")
     public ResponseEntity<?> getUser(@PathVariable Long userId) {
         return ResponseEntity.ok(userService.getUser(userId));
@@ -115,7 +145,7 @@ public class UserController {
                             schema = @Schema(implementation = User.class))}),
             @ApiResponse(responseCode = "401", description = "unauthorized",
                     content = @Content)})
-    @SecurityRequirement(name = "NNPRO_API")
+    @SecurityRequirement(name = "NNPIA_API")
     @GetMapping("")
     public ResponseEntity<?> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
@@ -130,7 +160,7 @@ public class UserController {
                     content = @Content),
             @ApiResponse(responseCode = "500", description = "User not found",
                     content = @Content),})
-    @SecurityRequirement(name = "NNPRO_API")
+    @SecurityRequirement(name = "NNPIA_API")
     @GetMapping("/getAllRoles")
     public ResponseEntity<?> getAllRoles() {
         return ResponseEntity.ok(userService.getAllRoles());
@@ -145,14 +175,12 @@ public class UserController {
                     content = @Content),
             @ApiResponse(responseCode = "500", description = "User not found",
                     content = @Content),})
-    @SecurityRequirement(name = "NNPRO_API")
-    @PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_Okres')")
+    @SecurityRequirement(name = "NNPIA_API")
+    @PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_USER')")
     @DeleteMapping("/{userId}")
     public ResponseEntity<?> removeOwner(@PathVariable Long userId) {
         return ResponseEntity.ok(userService.removeUser(userId));
     }
-
-
 
     @Operation(summary = "Change user password ")
     @ApiResponses(value = {
@@ -163,8 +191,8 @@ public class UserController {
                     content = @Content),
             @ApiResponse(responseCode = "500", description = "User not found",
                     content = @Content),})
-    @SecurityRequirement(name = "NNPRO_API")
-    @PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_Okres')")
+    @SecurityRequirement(name = "NNPIA_API")
+    @PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_USER')")
     @PutMapping("/changeUserPassword/{userId}")
     public ResponseEntity<?> changeUserPassword(@PathVariable Long userId, @RequestBody @Valid ChangePasswordDto changePasswordDto) {
         return ResponseEntity.ok(userService.changePassword(userId, changePasswordDto));
@@ -180,30 +208,26 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "User not found",
                     content = @Content),})
     @PostMapping(value = "/login")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest)
-            throws Exception {
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
-        authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
-        final UserDetails userDetails = jwtInMemoryUserDetailsService
-                .loadUserByUsername(authenticationRequest.getUsername());
-        final User user = userRepository.findByUsername(authenticationRequest.getUsername());
-        final String token = jwtTokenUtil.generateToken(userDetails);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtUtils.generateJwtToken(authentication);
 
-        return ResponseEntity.ok(new JwtResponse(token));
-    }
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        String role = userDetails.getAuthorities().stream()
+                .map(item -> item.getAuthority())
+                .findFirst()
+                .orElse("defaultAuthorityValue");
 
-    private void authenticate(String username, String password) throws Exception {
-        Objects.requireNonNull(username);
-        Objects.requireNonNull(password);
 
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        } catch (DisabledException e) {
-            throw new Exception("USER_DISABLED", e);
-        } catch (BadCredentialsException e) {
-            throw new Exception("INVALID_CREDENTIALS", e);
-        }
+        return ResponseEntity.ok(new JwtResponse(jwt,
+                userDetails.getId(),
+                userDetails.getUsername(),
+                userDetails.getEmail(),
+                role));
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

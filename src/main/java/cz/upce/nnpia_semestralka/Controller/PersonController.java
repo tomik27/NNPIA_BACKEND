@@ -5,6 +5,7 @@ import cz.upce.nnpia_semestralka.dto.FilmInDto;
 import cz.upce.nnpia_semestralka.dto.InputPersonDto;
 import cz.upce.nnpia_semestralka.dto.PersonDto;
 import cz.upce.nnpia_semestralka.service.PersonServiceImpl;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -18,6 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/person")
+@SecurityRequirement(name = "NNPIA_API")
 @AllArgsConstructor
 public class PersonController {
 

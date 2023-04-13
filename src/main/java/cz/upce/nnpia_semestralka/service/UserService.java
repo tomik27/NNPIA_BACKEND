@@ -12,6 +12,7 @@ import cz.upce.nnpia_semestralka.dto.*;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -29,6 +30,7 @@ public class UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
     private final ModelMapper mapper;
     private final UserHasFilmRepository userHasFilmRepository;
+    private final PasswordEncoder encoder;
 
 
 
@@ -40,8 +42,13 @@ public class UserService {
        // User user = ConversionService.convertToUser(userDto);
         User user = mapper.map(userDto, User.class);
 
-        user.setPassword(webSecurityConfig.getEncoder().encode(user.getPassword()));
+        user.setPassword(encoder.encode(user.getPassword()));
 
+        RoleEnum roleEnum = RoleEnum.ROLE_USER;
+        if(RoleEnum.ROLE_ADMIN.getDisplayValue().equals(userDto.getRole()))
+            roleEnum=RoleEnum.ROLE_ADMIN;
+
+        user.setRole(roleEnum);
         User save = userRepository.save(user);
         return save;
     }
