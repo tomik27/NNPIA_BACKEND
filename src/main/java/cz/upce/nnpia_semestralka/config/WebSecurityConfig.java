@@ -88,10 +88,11 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
 				.exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 				.authorizeRequests().antMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+				.antMatchers("/api/user/login").permitAll()
 				.antMatchers("/api/swagger-ui/**").permitAll()
 				.antMatchers("/user/**").permitAll()
+				.antMatchers("/**").permitAll()
 				.antMatchers("/api/test/**").permitAll()
-
 				.anyRequest().authenticated();
 
 		http.authenticationProvider(authenticationProvider());

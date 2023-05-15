@@ -1,11 +1,10 @@
 package cz.upce.nnpia_semestralka.Controller;
 
 import cz.upce.nnpia_semestralka.domain.Film;
+import cz.upce.nnpia_semestralka.domain.FilmHasPerson;
 import cz.upce.nnpia_semestralka.domain.Genre;
-import cz.upce.nnpia_semestralka.dto.AddFilmToUserDto;
-import cz.upce.nnpia_semestralka.dto.AddPersonToFilmDto;
-import cz.upce.nnpia_semestralka.dto.FilmInDto;
-import cz.upce.nnpia_semestralka.dto.FilmOutDto;
+import cz.upce.nnpia_semestralka.domain.UserHasFilm;
+import cz.upce.nnpia_semestralka.dto.*;
 import cz.upce.nnpia_semestralka.service.FilmServiceImpl;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
@@ -56,9 +55,9 @@ public class FilmController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> getFilmDetail(@PathVariable final Long id) {
         return ResponseEntity.ok(filmService.getFilmDetail(id));
+
     }
 
     @Transactional
@@ -150,4 +149,7 @@ public class FilmController {
     }
           }
   */
+
+
+
 }

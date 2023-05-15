@@ -50,8 +50,13 @@ public class PersonServiceImpl {
         return personRepository.findById(id);
     }
 
-    public List<Person> getAll() {
-        return personRepository.findAll();
+    public List<PersonDto> getAll() {
+        List<Person> all = personRepository.findAll();
+        List<PersonDto> personDtos = all.stream()
+                .map(person -> mapPersonToDto(person))
+                .collect(Collectors.toList());
+
+        return personDtos;
     }
 
     public PersonDto getPersonDetail(Long id) {
@@ -69,7 +74,10 @@ public class PersonServiceImpl {
     }
 
     public Person removePerson(Long personId) {
-        return personRepository.findById(personId).orElseThrow(() -> new NoSuchElementException("Person not found!"));
+        Person person = personRepository.findById(personId)
+                .orElseThrow(() -> new NoSuchElementException("Person not found with id: " + personId));
+        personRepository.delete(person);
+        return person;
     }
 
     public Person editFilm(Long id, InputPersonDto personDto) {
@@ -79,5 +87,23 @@ public class PersonServiceImpl {
         return personRepository.save(person);
     }
 
+    public PersonDto mapPersonToDto(Person person) {
+        List<PersonHasFilmDto> personHasFilmDtos = person.getFilmsWithPerson().stream()
+                .map(filmHasPerson -> new PersonHasFilmDto(
+                        filmHasPerson.getTypeOfPerson(),
+                        filmHasPerson.getFilm().getId(),
+                        filmHasPerson.getPerson().getId(),
+                        filmHasPerson.getFilm().getName()
+                ))
+                .collect(Collectors.toList());
 
+        return new PersonDto(
+                person.getId(),
+                person.getFirstName(),
+                person.getLastName(),
+                person.getBirthDate(),
+                person.getBirthPlace(),
+                personHasFilmDtos
+        );
+    }
 }

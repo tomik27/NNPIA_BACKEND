@@ -1,16 +1,24 @@
 package cz.upce.nnpia_semestralka.dto;
 
-public class SignUserDto {
+public class AddUserDto {
 
 
     private String username;
 
     private String password;
 
-    private String repeatPassword;
 
-    private String email;
+    private String emailAddress;
 
+    private String role;
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
 
     public String getUsername() {
         return username;
@@ -28,19 +36,11 @@ public class SignUserDto {
         this.password = password;
     }
 
-    public String getRepeatPassword() {
-        return repeatPassword;
+    public String getEmailAddress() {
+        return emailAddress;
     }
 
-    public void setRepeatPassword(String repeatPassword) {
-        this.repeatPassword = repeatPassword;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
     }
 }

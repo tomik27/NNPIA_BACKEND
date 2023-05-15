@@ -1,6 +1,7 @@
 package cz.upce.nnpia_semestralka.dto;
 
 import cz.upce.nnpia_semestralka.domain.Genre;
+import cz.upce.nnpia_semestralka.domain.UserHasFilm;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,4 +22,6 @@ public class FilmOutDto {
     private Integer releaseYear;
     private byte[] image;
     private List<FilmHasPersonDto> personsInFilms;
+    private List<UserHasFilmDto> ratingByUsers;
+
 }

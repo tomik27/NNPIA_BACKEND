@@ -63,12 +63,16 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "User not found",
                     content = @Content),})
     @SecurityRequirement(name = "NNPIA_API")
-      @PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_USER')")
-    @PostMapping("/addUser")
-    public ResponseEntity<?> addUser(@RequestBody @Valid SignUserDto userDto) {
+    //  @PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_USER')")
+    @PostMapping("")
+    public ResponseEntity<?> addUser(@RequestBody @Valid AddUserDto userDto) {
         return ResponseEntity.ok(userService.addUser(userDto));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody @Valid UpdateUserDto userDto) {
+        return ResponseEntity.ok(userService.updateUser(id, userDto));
+    }
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUserDto signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
@@ -77,23 +81,23 @@ public class UserController {
                     .body(new MessageResponse("Error: Username is already taken!"));
         }
 
-        if (userRepository.existsByEmail(signUpRequest.getEmailAddress())) {
+        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Error: Email is already in use!"));
         }
         RoleEnum roleEnum = RoleEnum.ROLE_USER;
+    /*    RoleEnum roleEnum = RoleEnum.ROLE_USER;
         if(RoleEnum.ROLE_ADMIN.getDisplayValue().equals(signUpRequest.getRole()))
-            roleEnum=RoleEnum.ROLE_ADMIN;
+            roleEnum=RoleEnum.ROLE_ADMIN;*/
 
         // Create new user's account
         User user = new User(signUpRequest.getUsername(),
-                signUpRequest.getEmailAddress(),
                 encoder.encode(signUpRequest.getPassword()),
-                roleEnum);
+                signUpRequest.getEmail(),roleEnum);
 
-        userRepository.save(user);
-        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+        User save = userRepository.save(user);
+        return ResponseEntity.ok(save);
     }
 
     @Operation(summary = "Get user info")
@@ -204,7 +208,6 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "User logged in and jwt token returned",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = JwtResponse.class))}),
-
             @ApiResponse(responseCode = "500", description = "User not found",
                     content = @Content),})
     @PostMapping(value = "/login")
@@ -243,7 +246,7 @@ public class UserController {
     }
 
     @PostMapping("/addFilm")
-  //  @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     public ResponseEntity<?> addFilmToUser(@RequestBody @Valid AddFilmToUserDto addFilmToUserDto) {
         userService.addFilmToUser(addFilmToUserDto);
             return ResponseEntity.ok().build();

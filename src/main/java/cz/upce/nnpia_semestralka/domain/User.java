@@ -1,5 +1,6 @@
 package cz.upce.nnpia_semestralka.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -35,5 +36,12 @@ public class User {
         this.password = password;
         this.email = email;
         this.role = role;
+    }
+
+
+    public User(String username, String emailAddress, String encode) {
+        this.username=username;
+        this.email=emailAddress;
+        this.password=encode;
     }
 }

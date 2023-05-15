@@ -19,6 +19,7 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -34,12 +35,10 @@ public class UserService {
 
 
 
-    public User addUser(SignUserDto userDto) {
+    public User addUser(AddUserDto userDto) {
         if (userRepository.existsByUsername(userDto.getUsername())) {
             throw new IllegalArgumentException("The username already exists.");
         }
-        //User user = ConversionService.convertToUser(userDto);
-       // User user = ConversionService.convertToUser(userDto);
         User user = mapper.map(userDto, User.class);
 
         user.setPassword(encoder.encode(user.getPassword()));
@@ -53,16 +52,48 @@ public class UserService {
         return save;
     }
 
+    public User updateUser(Long id, UpdateUserDto userDto) {
+        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found."));
+        String oldPassword = user.getPassword();
+
+        if (userDto.getUsername() != null) {
+            if (userRepository.existsByUsername(userDto.getUsername()) && !userDto.getUsername().equals(user.getUsername())) {
+                throw new IllegalArgumentException("The username already exists.");
+            }
+            user.setUsername(userDto.getUsername());
+        }
+
+        if (userDto.getEmail() != null) {
+            user.setEmail(userDto.getEmail());
+        }
+
+        if (userDto.getPassword() != null && !userDto.getPassword().equals(oldPassword)) {
+            user.setPassword(encoder.encode(userDto.getPassword()));
+        }
+
+        if (userDto.getRole() != null) {
+            RoleEnum roleEnum = RoleEnum.ROLE_USER;
+            if(RoleEnum.ROLE_ADMIN.getDisplayValue().equals(userDto.getRole()))
+                roleEnum=RoleEnum.ROLE_ADMIN;
+
+            user.setRole(roleEnum);
+        }
+
+        return userRepository.save(user);
+    }
+
+
+
     public User removeUser(Long userId) {
             User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found!"));
             userRepository.deleteById(userId);
         return user;
     }
 
-    public User getUser(Long userId) {
+    public UserDto getUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found!"));
-       // UserDetailOutDto detailOutDto = ConversionService.convertToUserDetailOutDto(user);
-        return user;
+        UserDto userDto = convertToUserDto(user);
+        return userDto;
     }
 
 
@@ -95,6 +126,35 @@ public class UserService {
         }
         return userDetailOutDtos;*/
     }
+
+    public UserDto convertToUserDto(User user) {
+        UserDto userDto = new UserDto();
+        userDto.setId(user.getId());
+        userDto.setUsername(user.getUsername());
+        userDto.setPassword(user.getPassword());
+        userDto.setEmail(user.getEmail());
+        userDto.setRole(user.getRole().ordinal());
+
+        List<UserHasFilmDto> userHasFilmDtos = user.getUserRatingFilms().stream()
+                .map(this::convertUserHasFilmToDto)
+                .collect(Collectors.toList());
+        userDto.setUserRatingFilms(userHasFilmDtos);
+
+        return userDto;
+    }
+
+    private UserHasFilmDto convertUserHasFilmToDto(UserHasFilm userHasFilm) {
+        UserHasFilmDto userHasFilmDto = new UserHasFilmDto();
+        userHasFilmDto.setId(userHasFilm.getId());
+        userHasFilmDto.setRating(userHasFilm.getRating());
+        userHasFilmDto.setComment(userHasFilm.getComment());
+        userHasFilmDto.setUserId(userHasFilm.getUser().getId());
+        userHasFilmDto.setFilmId(userHasFilm.getFilm().getId());
+        userHasFilmDto.setFilmName(userHasFilm.getFilm().getName());
+
+        return userHasFilmDto;
+    }
+
 
     public void addFilmToUser(AddFilmToUserDto addFilmToUserDto) {
         User user = userRepository.findById(addFilmToUserDto.getUserId()).orElseThrow(() -> new NoSuchElementException("User not found!"));

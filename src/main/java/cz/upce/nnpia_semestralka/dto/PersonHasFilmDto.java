@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PersonHasFilmDto {
-
-        private Long id;
         private TypeOfPerson typeOfPerson;
         private Long filmId;
         private Long personId;

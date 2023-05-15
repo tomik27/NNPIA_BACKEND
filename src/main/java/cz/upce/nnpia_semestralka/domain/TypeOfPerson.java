@@ -2,7 +2,8 @@ package cz.upce.nnpia_semestralka.domain;
 
 public enum TypeOfPerson {
     DIRECTOR("D"),
-    ACTOR("ACTOR");
+    ACTOR("ACTOR"),
+    WRITER("WRITER");
 
     private final String displayValue;
 

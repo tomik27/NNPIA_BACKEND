@@ -28,8 +28,8 @@ public class PersonController {
 
     @GetMapping
     public ResponseEntity<?> getAllPerson(){
-        List<Person> all = personService.getAll();
-        return ResponseEntity.ok(mapper.map(all, new TypeToken<List<PersonDto>>(){}.getType()));
+        List<PersonDto> allDto = personService.getAll();
+        return ResponseEntity.ok(allDto);
     }
 
     @GetMapping("/{id}")

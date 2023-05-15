@@ -2,6 +2,7 @@ package cz.upce.nnpia_semestralka.service;
 
 import cz.upce.nnpia_semestralka.Repository.UserRepository;
 import cz.upce.nnpia_semestralka.domain.User;
+import cz.upce.nnpia_semestralka.dto.AddUserDto;
 import cz.upce.nnpia_semestralka.dto.ChangePasswordDto;
 import cz.upce.nnpia_semestralka.dto.SignUserDto;
 import org.junit.jupiter.api.AfterEach;
