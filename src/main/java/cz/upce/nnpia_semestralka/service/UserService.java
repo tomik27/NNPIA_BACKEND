@@ -9,8 +9,10 @@ import cz.upce.nnpia_semestralka.domain.RoleEnum;
 import cz.upce.nnpia_semestralka.domain.User;
 import cz.upce.nnpia_semestralka.domain.UserHasFilm;
 import cz.upce.nnpia_semestralka.dto.*;
+import cz.upce.nnpia_semestralka.payload.response.MessageResponse;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,7 +35,26 @@ public class UserService {
     private final UserHasFilmRepository userHasFilmRepository;
     private final PasswordEncoder encoder;
 
+    public User register(SignUserDto signUpRequest){
 
+        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+            throw new IllegalArgumentException("The username already exists.");
+        }
+
+        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+            throw new IllegalArgumentException("Email is already exists.");
+        }
+
+        RoleEnum roleEnum = RoleEnum.ROLE_USER;
+
+        // Create new user's account
+        User user = new User(signUpRequest.getUsername(),
+                encoder.encode(signUpRequest.getPassword()),
+                signUpRequest.getEmail(),roleEnum);
+
+        User save = userRepository.save(user);
+        return save;
+    }
 
     public User addUser(AddUserDto userDto) {
         if (userRepository.existsByUsername(userDto.getUsername())) {
@@ -186,36 +207,4 @@ public class UserService {
             userRepository.save(userAdmin);
         }
     }
-/*
-    public User editUser(Long userId, UserDto userDto) {
-        if (userRepository.existsByUsernameAndIdIsNot(userDto.getUsername(), userId)) {
-            throw new IllegalArgumentException("The username already exists.");
-        }
-        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found!"));
-        User editedUser = ConversionService.convertToUser(userDto, user, role);
-        User save = userRepository.save(editedUser);
-        return save;
-    }
-
-
-
-    public List<Role> getAllRoles() {
-        List<Role> all = roleRepository.findAll();
-        return all;
-    }
-
-    public List<UserDetailOutDto> getAllUsers() {
-        List<User> users = userRepository.findAll();
-        List<UserDetailOutDto> userDetailOutDtos = new ArrayList<>();
-        for (User user : users) {
-            userDetailOutDtos.add(ConversionService.convertToUserDetailOutDto(user));
-        }
-        return userDetailOutDtos;
-    }
-
-    public Integer getSalary(Long userId) {
-        return  10;
-    }
-    */
-
 }

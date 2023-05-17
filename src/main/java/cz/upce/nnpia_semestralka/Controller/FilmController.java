@@ -57,7 +57,6 @@ public class FilmController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getFilmDetail(@PathVariable final Long id) {
         return ResponseEntity.ok(filmService.getFilmDetail(id));
-
     }
 
     @Transactional
@@ -67,30 +66,27 @@ public class FilmController {
             filmService.delete(id);
             return ResponseEntity.ok().build();
     }
-/*
-    @PostMapping("/api/film")
-    public ResponseEntity<?> createFilm(@RequestParam(required = false) MultipartFile file, @RequestParam(required = false) String name, @RequestParam(required = false) Genre genre,@RequestParam(required = false) Date date) {
-        try {
-
-            Film newFilm = filmService.createFilm(name,genre,file,date);
-            return ResponseEntity.ok(mapper.map(newFilm, FilmDto.class));
-
-        }
-        catch (Exception exception) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error while creating an film.");
-        }
-    }*/
-//@RequestBody FilmDto filmDto @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = "",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createFilm(@RequestParam String name, @RequestParam Genre genre, @RequestParam(required = false) Integer releaseDate, @RequestParam(name="imageFile",required = false) MultipartFile imageFile) throws IOException {
         FilmInDto filmInDto = new FilmInDto(name,genre,releaseDate);
         FilmOutDto film = filmService.createFilm(imageFile,filmInDto);
         return ResponseEntity.ok(film);
     }
+/*
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping(value ="/{id}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updateFilm(@RequestParam Long id,@RequestBody FilmInDto filmInDto, @RequestParam(name="imageFile",required = false) MultipartFile imageFile) throws IOException {
+        return ResponseEntity.ok(filmService.editFilm(id,imageFile,filmInDto));
+    }*/
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateFilm(@PathVariable Long id,@RequestBody FilmInDto filmInDto) {
-        return ResponseEntity.ok(filmService.editFilm(id,filmInDto));
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping(value ="/{id}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updateFilm(
+            @RequestParam Long id,
+            @ModelAttribute FilmInDto filmInDto,
+            @RequestParam(name="imageFile",required = false) MultipartFile imageFile) throws IOException {
+        return ResponseEntity.ok(filmService.editFilm(id,imageFile,filmInDto));
     }
 
     @PostMapping("/addPerson")
@@ -99,57 +95,12 @@ public class FilmController {
         filmService.addPersonToFilm(addPersonToFilmDto);
         return ResponseEntity.ok().build();
     }
-    /*
 
-    @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<FilmOutDto> createFilm(@RequestPart("film") FilmInDto filmInDto, @RequestPart("image") MultipartFile imageFile) throws IOException {
-        FilmOutDto film = filmService.createFilm(imageFile, filmInDto);
-        return ResponseEntity.ok(film);
+    @DeleteMapping("/deletePerson")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+    public ResponseEntity<?> deletePersonFromFilm(@RequestBody @Valid AddPersonToFilmDto addPersonToFilmDto) {
+        filmService.deletePersonFromFilm(addPersonToFilmDto);
+        return ResponseEntity.ok().build();
     }
-*/
-
-
- /*
-    @GetMapping(value={"/film-form","/film-form/{id}"})
-    //nepovinne
-    public String showFilmForm(@PathVariable(required = false) Long id, Model model){
-      if(id!=null){
-            //or else, kdyz id nenajdu tak pridam novy product
-            Film byId =  filmRepository.findById(id).orElse(new Film());
-            AddOrEditFilmDto dto= new AddOrEditFilmDto();
-            dto.setId( byId.getId());
-            dto.setName(byId.getName());
-            //   dto.setGenre(byId.setGenre());
-            dto.setReleaseDate(byId.getReleaseDate());
-            //dto.set
-            model.addAttribute("film",dto);
-        }else{
-            model.addAttribute("film",new AddOrEditFilmDto());
-
-        return "film-form";
-    }
-    @GetMapping("/film/{id}")
-    public String showFilm(@PathVariable Long id,Model model){
-        //ctr alt t
-        Film film =filmRepository.findById(id) .get();
-        model.addAttribute("film",film);
-        return "film";
-    }
-    @PostMapping("/film-form-process")
-    public String filmFormProcess(AddOrEditFilmDto addOrEditFilmDto){
-        Film film = new Film();
-        //ssave rozpozna, ze v sobe ma identifikator, takze provedeu update
-        film.setName(addOrEditFilmDto.getName());
-        film.setId(addOrEditFilmDto.getId());
-
-      //  film.setDirector(addOrEditFilmDto.getDirector());
-        film.setReleaseDate(addOrEditFilmDto.getReleaseDate());
-        filmRepository.save(film);
-        return "redirect:/";
-    }
-          }
-  */
-
-
 
 }

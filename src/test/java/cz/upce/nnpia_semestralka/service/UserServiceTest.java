@@ -23,7 +23,7 @@ class UserServiceTest {
     private UserRepository userRepository;
     @Test
     void changePassword() {
-        SignUserDto userDto = new SignUserDto();
+        AddUserDto userDto = new AddUserDto();
         userDto.setPassword("heslo");
         userDto.setUsername("username3");
 

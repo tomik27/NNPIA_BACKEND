@@ -39,13 +39,6 @@ public class FilmServiceImpl  {
         this.userHasFilmRepository = userHasFilmRepository;
     }
 
-    public Film deleteFilm(Long id) throws Exception {
-        Film film = filmRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Film not found."));
-        filmRepository.deleteById(id);
-        return film;
-    }
-
-
     public FilmOutDto createFilm(MultipartFile file,FilmInDto filmInDto) throws IOException {
 
         Film film = mapper.map(filmInDto, Film.class);
@@ -57,6 +50,15 @@ public class FilmServiceImpl  {
 
         FilmOutDto filmOutDto = mapper.map(savedFilm, FilmOutDto.class);
         return filmOutDto;
+    }
+
+    public Film editFilm(Long id,MultipartFile file, FilmInDto filmInDto) throws IOException {
+        filmRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Film id not found!"));
+        Film film = mapper.map(filmInDto, Film.class);
+        if (file != null)
+            film.setImage(file.getBytes());
+        film.setId(id);
+        return filmRepository.save(film);
     }
 
     public List<Film> getAll() {
@@ -89,12 +91,18 @@ public class FilmServiceImpl  {
 
     }
 
-    public Film editFilm(Long id, FilmInDto filmInDto) {
-        filmRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Film id not found!"));
-        Film film = mapper.map(filmInDto, Film.class);
-        film.setId(id);
-       return filmRepository.save(film);
+    public void deletePersonFromFilm(AddPersonToFilmDto addPersonToFilmDto) {
+        List<FilmHasPerson> filmHasPersonList = filmHasPersonRepository.findByFilm_IdAndPerson_Id(addPersonToFilmDto.getFilmId(), addPersonToFilmDto.getPersonId());
+        if(filmHasPersonList != null && !filmHasPersonList.isEmpty()) {
+            filmHasPersonList.forEach(filmHasPerson -> {
+                if(filmHasPerson.getTypeOfPerson().equals(addPersonToFilmDto.getTypeOfPerson()))
+                filmHasPersonRepository.delete(filmHasPerson);
+            });
+        } else {
+            throw new NoSuchElementException("No such person attached to the film!");
+        }
     }
+
 
     public void addPersonToFilm(AddPersonToFilmDto addPersonToFilmDto) {
         Person person = personRepository.findById(addPersonToFilmDto.getPersonId()).orElseThrow(() -> new NoSuchElementException("Person not found!"));
@@ -111,6 +119,7 @@ public class FilmServiceImpl  {
 
         filmHasPersonRepository.save(newFilmHasPerson);
     }
+
 
     /*    'Akční',
     'Animovaný',

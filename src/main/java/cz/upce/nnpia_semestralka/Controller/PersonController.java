@@ -8,13 +8,10 @@ import cz.upce.nnpia_semestralka.service.PersonServiceImpl;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -39,16 +36,19 @@ public class PersonController {
     }
 
     @DeleteMapping("/{personId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> removePerson(@PathVariable Long personId) {
         return ResponseEntity.ok(personService.removePerson(personId));
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> createPerson(@RequestBody @Valid InputPersonDto personDto) {
             Person newPerson = personService.createPerson(personDto);
             return ResponseEntity.ok(mapper.map(newPerson, PersonDto.class));
     }
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> updatePerson(@PathVariable Long id,@RequestBody InputPersonDto personDto) {
         return ResponseEntity.ok(personService.editFilm(id,personDto));
     }

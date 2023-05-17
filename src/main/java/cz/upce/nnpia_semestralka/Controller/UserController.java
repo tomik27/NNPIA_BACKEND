@@ -40,15 +40,13 @@ import javax.validation.Valid;
 public class UserController {
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
-    private final UserRepository userRepository;
     private final   JwtUtils jwtUtils;
     private final PasswordEncoder encoder;
 
 
-    public UserController(UserService userService, AuthenticationManager authenticationManager, UserRepository userRepository, JwtUtils jwtUtils, UserDetailsService jwtInMemoryUserDetailsService, PasswordEncoder encoder) {
+    public UserController(UserService userService, AuthenticationManager authenticationManager, JwtUtils jwtUtils, PasswordEncoder encoder) {
         this.userService = userService;
         this.authenticationManager = authenticationManager;
-        this.userRepository = userRepository;
         this.jwtUtils = jwtUtils;
         this.encoder = encoder;
     }
@@ -63,84 +61,30 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "User not found",
                     content = @Content),})
     @SecurityRequirement(name = "NNPIA_API")
-    //  @PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("")
     public ResponseEntity<?> addUser(@RequestBody @Valid AddUserDto userDto) {
         return ResponseEntity.ok(userService.addUser(userDto));
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody @Valid UpdateUserDto userDto) {
         return ResponseEntity.ok(userService.updateUser(id, userDto));
     }
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUserDto signUpRequest) {
-        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Username is already taken!"));
-        }
-
-        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Email is already in use!"));
-        }
-        RoleEnum roleEnum = RoleEnum.ROLE_USER;
-    /*    RoleEnum roleEnum = RoleEnum.ROLE_USER;
-        if(RoleEnum.ROLE_ADMIN.getDisplayValue().equals(signUpRequest.getRole()))
-            roleEnum=RoleEnum.ROLE_ADMIN;*/
-
-        // Create new user's account
-        User user = new User(signUpRequest.getUsername(),
-                encoder.encode(signUpRequest.getPassword()),
-                signUpRequest.getEmail(),roleEnum);
-
-        User save = userRepository.save(user);
-        return ResponseEntity.ok(save);
+        User register = userService.register(signUpRequest);
+        return ResponseEntity.ok(register);
     }
 
     @Operation(summary = "Get user info")
     @SecurityRequirement(name = "NNPIA_API")
     @GetMapping("/{userId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     public ResponseEntity<?> getUser(@PathVariable Long userId) {
         return ResponseEntity.ok(userService.getUser(userId));
     }
-/*
-    @Operation(summary = "Get user info")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "User returned",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Integer.class))}),
-            @ApiResponse(responseCode = "401", description = "unauthorized",
-                    content = @Content),
-            @ApiResponse(responseCode = "500", description = "User not found",
-                    content = @Content),})
-    @SecurityRequirement(name = "NNPRO_API")
-    @GetMapping("/getSalary/{userId}")
-    public ResponseEntity<?> getSalary(@PathVariable Long userId) {
-        return ResponseEntity.ok(userService.getSalary(userId));
-    }
-
-
-
-    @Operation(summary = "Edit user")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "User edited and returned",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = User.class))}),
-            @ApiResponse(responseCode = "401", description = "unauthorized",
-                    content = @Content),
-            @ApiResponse(responseCode = "500", description = "User not found",
-                    content = @Content),})
-    @SecurityRequirement(name = "NNPRO_API")
-    @PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_Okres')")
-    @PutMapping("/editUser/{userId}")
-    public ResponseEntity<?> editUser(@PathVariable Long userId, @RequestBody @Valid UserDto userDto) {
-        return ResponseEntity.ok(userService.editUser(userId, userDto));
-    }
-
-*/
 
     @Operation(summary = "Get all users")
     @ApiResponses(value = {
@@ -150,6 +94,7 @@ public class UserController {
             @ApiResponse(responseCode = "401", description = "unauthorized",
                     content = @Content)})
     @SecurityRequirement(name = "NNPIA_API")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("")
     public ResponseEntity<?> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
@@ -180,7 +125,7 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "User not found",
                     content = @Content),})
     @SecurityRequirement(name = "NNPIA_API")
-    @PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{userId}")
     public ResponseEntity<?> removeOwner(@PathVariable Long userId) {
         return ResponseEntity.ok(userService.removeUser(userId));
@@ -224,7 +169,6 @@ public class UserController {
                 .map(item -> item.getAuthority())
                 .findFirst()
                 .orElse("defaultAuthorityValue");
-
 
         return ResponseEntity.ok(new JwtResponse(jwt,
                 userDetails.getId(),
