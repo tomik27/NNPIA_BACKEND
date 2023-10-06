@@ -1,7 +1,7 @@
 package cz.upce.nnpia_semestralka.service;
-import cz.upce.nnpia_semestralka.Repository.FilmRepository;
-import cz.upce.nnpia_semestralka.Repository.UserHasFilmRepository;
-import cz.upce.nnpia_semestralka.Repository.UserRepository;
+import cz.upce.nnpia_semestralka.repository.FilmRepository;
+import cz.upce.nnpia_semestralka.repository.UserHasFilmRepository;
+import cz.upce.nnpia_semestralka.repository.UserRepository;
 import cz.upce.nnpia_semestralka.domain.Film;
 import cz.upce.nnpia_semestralka.domain.User;
 import cz.upce.nnpia_semestralka.domain.UserHasFilm;
@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

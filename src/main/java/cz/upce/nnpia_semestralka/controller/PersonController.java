@@ -1,7 +1,6 @@
-package cz.upce.nnpia_semestralka.Controller;
+package cz.upce.nnpia_semestralka.controller;
 
 import cz.upce.nnpia_semestralka.domain.Person;
-import cz.upce.nnpia_semestralka.dto.FilmInDto;
 import cz.upce.nnpia_semestralka.dto.InputPersonDto;
 import cz.upce.nnpia_semestralka.dto.PersonDto;
 import cz.upce.nnpia_semestralka.service.PersonServiceImpl;

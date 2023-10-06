@@ -1,4 +1,4 @@
-package cz.upce.nnpia_semestralka.Controller;
+package cz.upce.nnpia_semestralka.controller;
 
 import cz.upce.nnpia_semestralka.domain.Film;
 import cz.upce.nnpia_semestralka.dto.FilmOutDto;

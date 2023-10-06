@@ -1,8 +1,8 @@
-package cz.upce.nnpia_semestralka.Controller;
+package cz.upce.nnpia_semestralka.controller;
 
-import cz.upce.nnpia_semestralka.Repository.FilmHasPersonRepository;
-import cz.upce.nnpia_semestralka.Repository.FilmRepository;
-import cz.upce.nnpia_semestralka.Repository.PersonRepository;
+import cz.upce.nnpia_semestralka.repository.FilmHasPersonRepository;
+import cz.upce.nnpia_semestralka.repository.FilmRepository;
+import cz.upce.nnpia_semestralka.repository.PersonRepository;
 import cz.upce.nnpia_semestralka.domain.*;
 import cz.upce.nnpia_semestralka.dto.AddPersonToFilmDto;
 
@@ -20,8 +20,6 @@ import org.springframework.http.ResponseEntity;
 import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
-
-import static org.springframework.test.util.AssertionErrors.assertNotNull;
 
 
 @SpringBootTest
@@ -43,19 +41,15 @@ class FilmControllerTest {
     @Autowired
     private FilmHasPersonRepository filmHasPersonRepository;
 
-    @BeforeEach
-    public void setUp() {
-        filmRepository.save(EXISTING);
-        filmRepository.flush(); //zajišťuje, že všechny neuložené změny v paměti (tzv. persistence context nebo session) jsou okamžitě odeslány do databáze
-    }
 
     //anotaci @Transactional na testovací metodu, což by mělo znamenat, že jak ukládání filmu a osoby, tak i vyhledání filmu jsou součástí stejné transakce
     @Test
     @Transactional
     void testGetFilm() {
-        ResponseEntity<?> response = filmController.getFilmDetail(EXISTING.getId());
+        Film film = filmRepository.save(EXISTING);
+        ResponseEntity<?> response = filmController.getFilmDetail(film.getId());
         FilmOutDto actual = (FilmOutDto) response.getBody();
-        Assertions.assertEquals(EXISTING.getId(), actual.getId());
+        Assertions.assertEquals(film.getId(), actual.getId());
     }
 
     @Test
@@ -66,15 +60,16 @@ class FilmControllerTest {
         person.setLastName("Doe");
         person.setBirthDate(new Date());
         personRepository.save(person);
+        Film film = filmRepository.save(EXISTING);
 
         AddPersonToFilmDto addPersonToFilmDto = new AddPersonToFilmDto();
         addPersonToFilmDto.setPersonId(person.getId());
-        addPersonToFilmDto.setFilmId(EXISTING.getId());
+        addPersonToFilmDto.setFilmId(film.getId());
         addPersonToFilmDto.setTypeOfPerson(TypeOfPerson.ACTOR);
 
         filmService.addPersonToFilm(addPersonToFilmDto);
 
-        List<FilmHasPerson> listFilmHasPerson = filmHasPersonRepository.findByFilm_IdAndPerson_Id(EXISTING.getId(), person.getId());
+        List<FilmHasPerson> listFilmHasPerson = filmHasPersonRepository.findByFilm_IdAndPerson_Id(film.getId(), person.getId());
         //Assertions.assertNotNull(listFilmHasPerson);
 
         Assertions.assertEquals(TypeOfPerson.ACTOR, listFilmHasPerson.get(0).getTypeOfPerson());

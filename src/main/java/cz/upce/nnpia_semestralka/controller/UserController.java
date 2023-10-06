@@ -1,7 +1,6 @@
-package cz.upce.nnpia_semestralka.Controller;
+package cz.upce.nnpia_semestralka.controller;
 
 
-import cz.upce.nnpia_semestralka.Repository.UserRepository;
 import cz.upce.nnpia_semestralka.config.jwt.JwtUtils;
 import cz.upce.nnpia_semestralka.config.services.UserDetailsImpl;
 import cz.upce.nnpia_semestralka.domain.RoleEnum;
@@ -9,7 +8,6 @@ import cz.upce.nnpia_semestralka.domain.User;
 import cz.upce.nnpia_semestralka.dto.*;
 import cz.upce.nnpia_semestralka.payload.request.LoginRequest;
 import cz.upce.nnpia_semestralka.payload.response.JwtResponse;
-import cz.upce.nnpia_semestralka.payload.response.MessageResponse;
 import cz.upce.nnpia_semestralka.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,7 +23,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -158,6 +155,7 @@ public class UserController {
     @PostMapping(value = "/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
+        //získání {uživatelské jméno, heslo} z požadavku na přihlášení, AuthenticationManagerpoužije jej k ověření přihlašovacího účtu
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 

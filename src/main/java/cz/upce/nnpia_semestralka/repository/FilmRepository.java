@@ -1,4 +1,4 @@
-package cz.upce.nnpia_semestralka.Repository;
+package cz.upce.nnpia_semestralka.repository;
 
 import cz.upce.nnpia_semestralka.domain.Film;
 import org.springframework.data.jpa.repository.EntityGraph;

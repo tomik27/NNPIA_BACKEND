@@ -78,13 +78,5 @@ public void testGetFilmDetail() throws Exception {
         .andExpect(jsonPath("$.name", is(EXISTING.getName())))
         .andExpect(jsonPath("$.releaseYear", is(EXISTING.getReleaseYear())));
         }
-/*
-@Test
-public void testDeleteFilm() throws Exception {
-        mockMvc.perform(delete("/film/1"))
-        .andExpect(status().isOk()).
-       // .andExpect(content().string(""));
-        }
 
-*/
         }

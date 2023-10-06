@@ -1,17 +1,13 @@
-package cz.upce.nnpia_semestralka.Controller;
+package cz.upce.nnpia_semestralka.controller;
 
 import cz.upce.nnpia_semestralka.domain.Film;
-import cz.upce.nnpia_semestralka.domain.FilmHasPerson;
 import cz.upce.nnpia_semestralka.domain.Genre;
-import cz.upce.nnpia_semestralka.domain.UserHasFilm;
 import cz.upce.nnpia_semestralka.dto.*;
 import cz.upce.nnpia_semestralka.service.FilmServiceImpl;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,9 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @RestController

@@ -1,18 +1,16 @@
 package cz.upce.nnpia_semestralka.service;
 
-import cz.upce.nnpia_semestralka.Repository.FilmRepository;
-import cz.upce.nnpia_semestralka.Repository.UserHasFilmRepository;
-import cz.upce.nnpia_semestralka.Repository.UserRepository;
+import cz.upce.nnpia_semestralka.repository.FilmRepository;
+import cz.upce.nnpia_semestralka.repository.UserHasFilmRepository;
+import cz.upce.nnpia_semestralka.repository.UserRepository;
 import cz.upce.nnpia_semestralka.config.WebSecurityConfig;
 import cz.upce.nnpia_semestralka.domain.Film;
 import cz.upce.nnpia_semestralka.domain.RoleEnum;
 import cz.upce.nnpia_semestralka.domain.User;
 import cz.upce.nnpia_semestralka.domain.UserHasFilm;
 import cz.upce.nnpia_semestralka.dto.*;
-import cz.upce.nnpia_semestralka.payload.response.MessageResponse;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

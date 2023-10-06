@@ -1,11 +1,9 @@
-package cz.upce.nnpia_semestralka.Repository;
+package cz.upce.nnpia_semestralka.repository;
 
 import cz.upce.nnpia_semestralka.domain.FilmHasPerson;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Set;
 
 public interface FilmHasPersonRepository extends JpaRepository<FilmHasPerson,Long> {
         //@EntityGraph(attributePaths = {"person","film"})

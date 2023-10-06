@@ -88,12 +88,16 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
 				.exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 				.authorizeRequests().antMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-				.antMatchers("/api/user/login").permitAll()
+				.antMatchers("/user/login").permitAll()
+				.antMatchers("/user/signup").permitAll()
+				.antMatchers("/changeUserPassword/{userId}").permitAll()
+				.antMatchers("/film").permitAll()
+				.antMatchers("/film/{id}").permitAll()
+				.antMatchers("/person").permitAll()
+				.antMatchers("/person/{id}").permitAll()
 				.antMatchers("/api/swagger-ui/**").permitAll()
-				.antMatchers("/user/**").permitAll()
-				.antMatchers("/**").permitAll()
 				.antMatchers("/api/test/**").permitAll()
-				.anyRequest().authenticated();
+				.anyRequest().authenticated();  //Pokud je uživatel uveren, jinak deny all
 
 		http.authenticationProvider(authenticationProvider());
 

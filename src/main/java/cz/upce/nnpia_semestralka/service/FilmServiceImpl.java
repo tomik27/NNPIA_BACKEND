@@ -1,10 +1,10 @@
 package cz.upce.nnpia_semestralka.service;
 
-import cz.upce.nnpia_semestralka.Repository.PersonRepository;
+import cz.upce.nnpia_semestralka.repository.PersonRepository;
 import cz.upce.nnpia_semestralka.domain.*;
-import cz.upce.nnpia_semestralka.Repository.FilmHasPersonRepository;
-import cz.upce.nnpia_semestralka.Repository.FilmRepository;
-import cz.upce.nnpia_semestralka.Repository.UserHasFilmRepository;
+import cz.upce.nnpia_semestralka.repository.FilmHasPersonRepository;
+import cz.upce.nnpia_semestralka.repository.FilmRepository;
+import cz.upce.nnpia_semestralka.repository.UserHasFilmRepository;
 import cz.upce.nnpia_semestralka.dto.*;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -14,7 +14,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;

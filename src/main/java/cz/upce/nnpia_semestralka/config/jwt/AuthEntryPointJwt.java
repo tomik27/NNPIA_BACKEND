@@ -16,7 +16,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+//AuthenticationEntryPoint zachytí chybu ověřování
 @Component
 public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 

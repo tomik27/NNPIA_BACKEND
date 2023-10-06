@@ -1,10 +1,9 @@
 package cz.upce.nnpia_semestralka.service;
 
-import cz.upce.nnpia_semestralka.Repository.FilmHasPersonRepository;
+import cz.upce.nnpia_semestralka.repository.FilmHasPersonRepository;
 import cz.upce.nnpia_semestralka.domain.FilmHasPerson;
 import cz.upce.nnpia_semestralka.domain.Person;
-import cz.upce.nnpia_semestralka.Repository.PersonRepository;
-import cz.upce.nnpia_semestralka.dto.FilmHasPersonDto;
+import cz.upce.nnpia_semestralka.repository.PersonRepository;
 import cz.upce.nnpia_semestralka.dto.InputPersonDto;
 import cz.upce.nnpia_semestralka.dto.PersonDto;
 import cz.upce.nnpia_semestralka.dto.PersonHasFilmDto;

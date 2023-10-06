@@ -1,6 +1,6 @@
 package cz.upce.nnpia_semestralka.config.services;
 
-import cz.upce.nnpia_semestralka.Repository.UserRepository;
+import cz.upce.nnpia_semestralka.repository.UserRepository;
 import cz.upce.nnpia_semestralka.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
